@@ -87,6 +87,13 @@ export function useNodeSearch<T extends GraphNode>(nodes: Array<T>) {
       combineWith: "and",
     });
 
+    // Move exact label matches to the top of results
+    const exactMatchIndex = results.findIndex(m => m.node.label === query);
+    if (exactMatchIndex !== -1) {
+      const [exactMatch] = results.splice(exactMatchIndex, 1);
+      results.unshift(exactMatch!);
+    }
+
     setResults(results);
   }, [query]);
 
