@@ -28,7 +28,7 @@ export default function TermSearch<T extends GraphNode = GraphNode>(
       <div>
         {(results || []).map(result => (
           <div
-            key={result.id}
+            key={result.node.uri}
             style={{
               cursor: "pointer",
             }}
