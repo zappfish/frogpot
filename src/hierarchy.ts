@@ -20,6 +20,7 @@ export type HierarchyRow<T extends GraphNode> = {
 export default class Hierarchy<T extends GraphNode> {
   root: T;
   graph: Graph<T>;
+  _items: Array<T>;
 
   nodesByURI: Map<string, T>;
   nodesByPathKey: Map<string, T>;
@@ -68,6 +69,8 @@ export default class Hierarchy<T extends GraphNode> {
         });
       },
     });
+
+    this._items = [...this.nodesByURI.values()].sort(sortByLabel);
   }
 
   getNode(node: string | T | Path) {
@@ -93,7 +96,7 @@ export default class Hierarchy<T extends GraphNode> {
   }
 
   items() {
-    return [...this.nodesByURI.values()].sort(sortByLabel);
+    return this._items;
   }
 
   getPathsForNode(node: string | T) {
