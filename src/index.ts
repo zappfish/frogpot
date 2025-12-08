@@ -5,6 +5,7 @@ export { useNodeSearch } from "./search";
 // Data model
 export { default as Graph } from "./graph";
 export { default as Hierarchy } from "./hierarchy";
+export type { HierarchyTreeHandle } from "./hierarchy";
 export { default as Path } from "./path";
 
 // Loaders
