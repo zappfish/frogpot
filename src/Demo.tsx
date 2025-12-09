@@ -33,7 +33,7 @@ function RenderedHierarchy(props: RenderedHierarchyProps) {
       <TermSearch
         nodes={hierarchy.items()}
         onSelectNode={node => {
-          ref.current?.openAndFocusNode(node.uri);
+          ref.current?.showNode(node.uri);
         }}
       />
     </div>
