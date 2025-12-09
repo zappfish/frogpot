@@ -95,7 +95,7 @@ export function useNodeSearch<T extends GraphNode>(nodes: Array<T>) {
     }
 
     setResults(results);
-  }, [query]);
+  }, [nodes, query]);
 
   const searchWords = query.split(" ").map(word => new RegExp("\\b" + word));
 
