@@ -25,7 +25,7 @@ export type HierarchyTreeHandle = {
 type HierarchyTreeState = {
   expandPaths: Set<string>;
   showPaths: Set<string>;
-  selectedPath: Path;
+  selectedPath: Path | null;
 };
 
 const d = {
@@ -138,7 +138,7 @@ function HierarchyTree<T extends GraphNode = GraphNode>(
   const emptyTreeState: () => HierarchyTreeState = () => ({
     expandPaths: new Set(),
     showPaths: new Set(),
-    selectedPath: hierarchy.getPathsForNode(props.rootURI)[0]!,
+    selectedPath: null,
   });
 
   const [treeState, setTreeState] =
@@ -228,6 +228,8 @@ function HierarchyTree<T extends GraphNode = GraphNode>(
   }, [tree]);
 
   useEffect(() => {
+    if (!treeState.selectedPath) return
+
     const uri = treeState.selectedPath.leaf();
     if (props.onSelectNode) {
       props.onSelectNode(hierarchy.getNode(uri));
@@ -261,7 +263,7 @@ function HierarchyTree<T extends GraphNode = GraphNode>(
 
       let nextSelectedPath = treeState.selectedPath;
 
-      if (path.isAncestorOf(treeState.selectedPath)) {
+      if (treeState.selectedPath && path.isAncestorOf(treeState.selectedPath)) {
         nextSelectedPath = path;
       }
 
@@ -285,8 +287,10 @@ function HierarchyTree<T extends GraphNode = GraphNode>(
     <div
       tabIndex={0}
       onKeyDown={e => {
+        if (!treeState.selectedPath) return;
+
         const curIdx = tree.findIndex(({ path }) =>
-          path.equals(treeState.selectedPath),
+          path.equals(treeState.selectedPath!),
         );
         const curItem = tree[curIdx];
 
@@ -408,7 +412,7 @@ function HierarchyTree<T extends GraphNode = GraphNode>(
                   whiteSpace: "nowrap",
                   textOverflow: "ellipsis",
 
-                  backgroundColor: treeState.selectedPath.leaf() === item.uri
+                  backgroundColor: treeState.selectedPath?.leaf() === item.uri
                     ? "#f0f0f0"
                     : "transparent",
                 }}
