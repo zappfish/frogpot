@@ -14,7 +14,12 @@ type HierarchyTreeProps<T extends GraphNode = GraphNode> = {
 };
 
 export type HierarchyTreeHandle = {
+  reset: () => void;
   openAndFocusNode: (uri: string) => void;
+  showNode: (uri: string) => void;
+  setTreeState: (
+    updateState: (state: HierarchyTreeState) => HierarchyTreeState,
+  ) => void;
 };
 
 type HierarchyTreeState = {
@@ -131,11 +136,14 @@ function HierarchyTree<T extends GraphNode = GraphNode>(
   const { hierarchy, itemURI } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [treeState, setTreeState] = useState<HierarchyTreeState>({
+  const emptyTreeState: () => HierarchyTreeState = () => ({
     expandPaths: new Set(),
     showPaths: new Set(),
     selectedPath: hierarchy.getPathsForNode(props.rootURI)[0]!,
   });
+
+  const [treeState, setTreeState] =
+    useState<HierarchyTreeState>(emptyTreeState());
 
   /*
   const [showRelations, setShowRelations] = useState(false);
@@ -174,6 +182,22 @@ function HierarchyTree<T extends GraphNode = GraphNode>(
   useImperativeHandle(
     ref,
     () => ({
+      reset() {
+        setTreeState(emptyTreeState());
+      },
+      setTreeState(updateState) {
+        setTreeState(updateState(treeState));
+      },
+      showNode(uri: string) {
+        const node = hierarchy.getNode(uri);
+        const paths = hierarchy.getPathsForNode(node);
+
+        setTreeState({
+          expandPaths: new Set(),
+          showPaths: new Set([...paths.map(path => path.key)]),
+          selectedPath: paths[0]!,
+        })
+      },
       openAndFocusNode(uri: string) {
         const node = hierarchy.getNode(uri);
         const paths = hierarchy.getPathsForNode(node);
