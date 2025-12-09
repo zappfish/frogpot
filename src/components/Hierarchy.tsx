@@ -250,15 +250,18 @@ function HierarchyTree<T extends GraphNode = GraphNode>(
       });
 
       const nextShowPaths = [...prev.showPaths].filter(_path => {
-        return !Path.fromKey(_path).startsWith(path);
+        return !path.isAncestorOf(Path.fromKey(_path))
       });
+
+      // Make sure this unexpanded node is shown. Otherwise it would just
+      // disappear.
+      if (nextExpandPaths.indexOf(pathKey) === -1) {
+        nextShowPaths.push(pathKey)
+      }
 
       let nextSelectedPath = treeState.selectedPath;
 
-      if (
-        treeState.selectedPath.startsWith(path) &&
-        !treeState.selectedPath.equals(path)
-      ) {
+      if (path.isAncestorOf(treeState.selectedPath)) {
         nextSelectedPath = path;
       }
 
