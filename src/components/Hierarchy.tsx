@@ -29,7 +29,6 @@ type HierarchyTreeState = {
 };
 
 const d = {
-  // width: 1000,
   tree: {
     itemHeight: 24,
     depthIndent: 16,
@@ -406,7 +405,7 @@ function HierarchyTree<T extends GraphNode = GraphNode>(
                   whiteSpace: "nowrap",
                   textOverflow: "ellipsis",
 
-                  backgroundColor: treeState.selectedPath.equals(path)
+                  backgroundColor: treeState.selectedPath.leaf() === item.uri
                     ? "#f0f0f0"
                     : "transparent",
                 }}
